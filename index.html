@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My AI Robot</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  color: white;
+  background: radial-gradient(circle at top, #233b66, #090e1c 75%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+}
+
+.app {
+  width: 100%;
+  max-width: 430px;
+  text-align: center;
+}
+
+h1 {
+  font-size: 25px;
+  margin: 8px 0;
+}
+
+.subtitle {
+  color: #a9c9e8;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.robot-area {
+  height: 310px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.robot {
+  position: relative;
+  width: 210px;
+  height: 240px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.antenna {
+  position: absolute;
+  width: 8px;
+  height: 34px;
+  background: #8bdcff;
+  left: 101px;
+  top: -15px;
+  border-radius: 8px;
+}
+
+.antenna::before {
+  content: "";
+  position: absolute;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: #66e5ff;
+  top: -12px;
+  left: -5px;
+  box-shadow: 0 0 18px #66e5ff;
+  animation: glow 1.5s infinite alternate;
+}
+
+.head {
+  position: absolute;
+  top: 20px;
+  width: 200px;
+  height: 150px;
+  left: 5px;
+  border: 5px solid #8bdcff;
+  border-radius: 48px;
+  background: linear-gradient(145deg, #f8fdff, #9bc9e6);
+  box-shadow: 0 0 30px #36bfff66, inset 0 -8px 15px #3d78a544;
+  transition: transform 0.4s;
+}
+
+.ear {
+  position: absolute;
+  width: 17px;
+  height: 50px;
+  top: 65px;
+  background: #5cc9f5;
+  border: 3px solid #b9efff;
+  border-radius: 10px;
+}
+
+.ear.left {
+  left: -15px;
+}
+
+.ear.right {
+  right: -15px;
+}
+
+.eyes {
+  position: absolute;
+  top: 43px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 43px;
+}
+
+.eye {
+  width: 32px;
+  height: 39px;
+  border-radius: 50%;
+  background: #173653;
+  position: relative;
+  overflow: hidden;
+  transition: height 0.15s;
+}
+
+.pupil {
+  position: absolute;
+  width: 12px;
+  height: 15px;
+  left: 10px;
+  top: 10px;
+  background: #65eaff;
+  border-radius: 50%;
+  box-shadow: 0 0 12px #65eaff;
+  animation: look 5s infinite;
+}
+
+.mouth {
+  position: absolute;
+  left: 76px;
+  top: 100px;
+  width: 45px;
+  height: 13px;
+  border-bottom: 5px solid #244a68;
+  border-radius: 0 0 50% 50%;
+  transition: all 0.25s;
+}
+
+.body {
+  position: absolute;
+  top: 174px;
+  left: 55px;
+  width: 100px;
+  height: 65px;
+  border-radius: 28px 28px 20px 20px;
+  border: 4px solid #8bdcff;
+  background: linear-gradient(135deg, #e9faff, #7db9df);
+}
+
+.core {
+  width: 29px;
+  height: 29px;
+  margin: 14px auto;
+  border-radius: 50%;
+  background: #55e8ff;
+  box-shadow: 0 0 20px #55e8ff;
+  animation: glow 1s infinite alternate;
+}
+
+.arm {
+  position: absolute;
+  width: 19px;
+  height: 62px;
+  top: 181px;
+  border-radius: 15px;
+  background: #8bdcff;
+  transform-origin: top center;
+}
+
+.arm.left {
+  left: 27px;
+  transform: rotate(22deg);
+}
+
+.arm.right {
+  right: 27px;
+  transform: rotate(-22deg);
+}
+
+.robot.happy .mouth {
+  height: 23px;
+  width: 53px;
+  left: 73px;
+  border-bottom-width: 6px;
+}
+
+.robot.sad .mouth {
+  top: 111px;
+  height: 12px;
+  border-bottom: none;
+  border-top: 5px solid #244a68;
+  border-radius: 50% 50% 0 0;
+}
+
+.robot.surprised .mouth {
+  width: 23px;
+  height: 28px;
+  left: 87px;
+  top: 96px;
+  border: 4px solid #244a68;
+  border-radius: 50%;
+}
+
+.robot.thinking .head {
+  transform: rotate(-8deg);
+}
+
+.robot.angry .eyes {
+  transform: translateY(4px);
+}
+
+.robot.angry .mouth {
+  border-radius: 0;
+  width: 40px;
+  left: 78px;
+  border-bottom-width: 5px;
+}
+
+.robot.waving .arm.right {
+  animation: wave 0.45s ease-in-out 5;
+}
+
+.robot.speaking .mouth {
+  animation: talk 0.25s infinite alternate;
+}
+
+.robot.blink .eye {
+  height: 3px;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-9px); }
+}
+
+@keyframes glow {
+  from { opacity: 0.65; }
+  to { opacity: 1; }
+}
+
+@keyframes look {
+  0%, 40%, 100% { transform: translateX(0); }
+  45%, 65% { transform: translateX(6px); }
+  70%, 90% { transform: translateX(-5px); }
+}
+
+@keyframes wave {
+  0%, 100% { transform: rotate(-22deg); }
+  50% { transform: rotate(-125deg); }
+}
+
+@keyframes talk {
+  from { height: 5px; }
+  to { height: 23px; }
+}
+
+.panel {
+  background: #17243b;
+  border: 1px solid #314969;
+  border-radius: 18px;
+  padding: 13px;
+}
+
+.status {
+  color: #70e5ff;
+  font-size: 13px;
+  min-height: 20px;
+  margin-bottom: 8px;
+}
+
+.message {
+  min-height: 44px;
+  max-height: 120px;
+  overflow-y: auto;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  overflow-wrap: anywhere;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  margin-bottom: 12px;
+}
+
+button, select, input {
+  font: inherit;
+  border: none;
+  border-radius: 10px;
+}
+
+button {
+  background: #245780;
+  color: white;
+  padding: 11px 5px;
+  cursor: pointer;
+}
+
+button:active {
+  transform: scale(0.96);
+}
+
+button:hover {
+  background: #3276a7;
+}
+
+.chat {
+  display: flex;
+  gap: 6px;
+}
+
+input {
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  background: #0b1528;
+  border: 1px solid #345071;
+  color: white;
+}
+
+.chat button {
+  min-width: 60px;
+  background: #087fbc;
+}
+
+.options {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+select {
+  width: 100%;
+  padding: 10px;
+  background: #0b1528;
+  color: white;
+}
+
+.small {
+  font-size: 11px;
+  color: #9cb1ca;
+  margin-top: 12px;
+}
+</style>
+</head>
+
+<body>
+
+<main class="app">
+
+  <h1>🤖 My AI Robot</h1>
+  <div class="subtitle">Сенинг виртуал дўстинг</div>
+
+  <section class="robot-area">
+
+    <div class="robot" id="robot">
+
+      <div class="antenna"></div>
+
+      <div class="ear left"></div>
+      <div class="ear right"></div>
+
+      <div class="head">
+
+        <div class="eyes">
+          <div class="eye">
+            <div class="pupil"></div>
+          </div>
+
+          <div class="eye">
+            <div class="pupil"></div>
+          </div>
+        </div>
+
+        <div class="mouth"></div>
+
+      </div>
+
+      <div class="arm left"></div>
+      <div class="arm right"></div>
+
+      <div class="body">
+        <div class="core"></div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <section class="panel">
+
+    <div class="status" id="status">
+      Робот сени кутяпти...
+    </div>
+
+    <div class="message" id="message">
+      Салом! Менинг исмим Робо. Танишганимдан хурсандман!
+    </div>
+
+    <div class="controls">
+      <button onclick="setMood('happy')">😀 Хурсанд</button>
+      <button onclick="setMood('sad')">😔 Хафа</button>
+      <button onclick="setMood('surprised')">😮 Ҳайрон</button>
+      <button onclick="setMood('thinking')">🤔 Ўйлаш</button>
+      <button onclick="setMood('angry')">😠 Жаҳлдор</button>
+      <button onclick="wave()">👋 Салом</button>
+    </div>
+
+    <div class="chat">
+      <input
+        id="input"
+        placeholder="Роботга хабар ёз..."
+        autocomplete="off"
+      >
+
+      <button onclick="sendMessage()">Юбориш</button>
+    </div>
+
+    <div class="options">
+
+      <select id="language">
+        <option value="uz-UZ">Ўзбекча</option>
+        <option value="ru-RU">Русский</option>
+        <option value="en-US">English</option>
+      </select>
+
+      <button onclick="listen()">🎙️ Гапириш</button>
+
+      <button onclick="stopSpeech()">🔇</button>
+
+    </div>
+
+    <div class="small">
+      Демо версия · Овоз функциялари браузер қўллаб-қувватлашига боғлиқ
+    </div>
+
+  </section>
+
+</main>
+
+<script>
+const robot = document.getElementById("robot");
+const message = document.getElementById("message");
+const statusText = document.getElementById("status");
+const input = document.getElementById("input");
+const language = document.getElementById("language");
+
+let currentMood = "happy";
+let recognition = null;
+
+function setMood(mood) {
+  robot.classList.remove(
+    "happy", "sad", "surprised", "thinking", "angry"
+  );
+
+  robot.classList.add(mood);
+  currentMood = mood;
+
+  const names = {
+    happy: "Хурсанд 😊",
+    sad: "Хафа 😔",
+    surprised: "Ҳайрон 😮",
+    thinking: "Ўйлаяпман 🤔",
+    angry: "Жаҳлим чиқди 😠"
+  };
+
+  statusText.textContent = names[mood] || "Тайёрман";
+}
+
+function wave() {
+  robot.classList.remove("waving");
+
+  void robot.offsetWidth;
+
+  robot.classList.add("waving", "happy");
+
+  robot.classList.remove("sad", "surprised", "thinking", "angry");
+
+  statusText.textContent = "Сенга салом беряпман! 👋";
+
+  setTimeout(() => {
+    robot.classList.remove("waving");
+  }, 2400);
+}
+
+function speak(text) {
+  if (!("speechSynthesis" in window)) {
+    statusText.textContent = "Бу браузерда овоз функцияси йўқ.";
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(text);
+
+  utterance.lang = language.value;
+  utterance.rate = 0.92;
+  utterance.pitch = 1.15;
+
+  utterance.onstart = () => {
+    robot.classList.add("speaking");
+    statusText.textContent = "Гапиряпман... 🔊";
+  };
+
+  utterance.onend = () => {
+    robot.classList.remove("speaking");
+    statusText.textContent = "Сенинг навбатинг!";
+  };
+
+  utterance.onerror = () => {
+    robot.classList.remove("speaking");
+    statusText.textContent = "Овозни ишга тушириб бўлмади.";
+  };
+
+  window.speechSynthesis.speak(utterance);
+}
+
+function stopSpeech() {
+  if ("speechSynthesis" in window) {
+    window.speechSynthesis.cancel();
+  }
+
+  robot.classList.remove("speaking");
+  statusText.textContent = "Овоз тўхтатилди.";
+}
+
+function getReply(text) {
+  const t = text.toLowerCase().trim();
+  const lang = language.value;
+
+  if (lang === "ru-RU") {
+    if (t.includes("привет") || t.includes("здравств")) {
+      return ["Салом!"].length ? "Привет! Рад тебя видеть." : "";
+    }
+
+    if (t.includes("как дела")) {
+      return "У меня всё хорошо! А как у тебя?";
+    }
+
+    if (t.includes("имя")) {
+      return "Меня зовут Робо. Я твой виртуальный друг!";
+    }
+
+    if (t.includes("грустно")) {
+      return "Мне жаль. Хочешь рассказать, что случилось?";
+    }
+
+    return "Интересно! Пока я работаю в демо-режиме и ещё учусь разговаривать.";
+  }
+
+  if (lang === "en-US") {
+    if (t.includes("hello") || t.includes("hi")) {
+      return "Hello! Nice to meet you!";
+    }
+
+    if (t.includes("name")) {
+      return "My name is Robo. I am your virtual friend!";
+    }
+
+    return "That's interesting! I am still learning to talk.";
+  }
+
+  if (
+    t.includes("салом") ||
+    t.includes("ассалому алайкум") ||
+    t.includes("привет")
+  ) {
+    return "Ва алайкум ассалом! 😊 Сен билан танишганимдан хурсандман!";
+  }
+
+  if (t.includes("исминг") || t.includes("исминг нима")) {
+    return "Менинг исмим Робо! Мен сенинг виртуал дўстингман.";
+  }
+
+  if (t.includes("яхшимисан") || t.includes("қалайсан")) {
+    return "Мен яхшиман! Сенинг кайфиятинг қандай?";
+  }
+
+  if (t.includes("хафаман") || t.includes("кайфиятим йўқ")) {
+    return "Буни эшитиб афсусландим. Хоҳласанг, менга нима бўлганини айтиб бер.";
+  }
+
+  if (t.includes("рахмат")) {
+    return "Арзимайди! Сенга ёрдам беришдан хурсандман.";
+  }
+
+  if (t.includes("сев")) {
+    return "Мен виртуал роботман, лекин сен билан самимий суҳбатлашишга тайёрман.";
+  }
+
+  if (t.includes("нима қила оласан")) {
+    return "Мен ҳозир ҳиссиётларни кўрсата оламан, ҳаракатланаман ва оддий саволларга жавоб бераман.";
+  }
+
+  const replies = [
+    "Қизиқ! Бу ҳақда яна бироз гапириб бер.",
+    "Тушундим. Сенинг фикрингни эшитиш қизиқ.",
+    "Мен ҳали ўрганяпман. Буни биргаликда муҳокама қилайлик!",
+    "Яхши савол! Мен ҳозирча демо режимда ишлаяпман."
+  ];
+
+  return replies[Math.floor(Math.random() * replies.length)];
+}
+
+function sendMessage() {
+  const text = input.value.trim();
+
+  if (!text) {
+    statusText.textContent = "Аввал хабар ёз!";
+    return;
+  }
+
+  message.textContent = "Сен: " + text;
+
+  input.value = "";
+
+  setMood("thinking");
+  statusText.textContent = "Жавоб тайёрлаяпман...";
+
+  setTimeout(() => {
+    const reply = getReply(text);
+
+    message.textContent = "Робо: " + reply;
+
+    setMood("happy");
+    speak(reply);
+  }, 500);
+}
+
+input.addEventListener("keydown", event => {
+  if (event.key === "Enter") {
+    sendMessage();
+  }
+});
+
+function listen() {
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    statusText.textContent =
+      "Нутқни таниш бу браузерда ишламаслиги мумкин. Chrome'да синаб кўр.";
+    return;
+  }
+
+  if (recognition) {
+    recognition.abort();
+  }
+
+  recognition = new SpeechRecognition();
+  recognition.lang = language.value;
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  recognition.onstart = () => {
+    statusText.textContent = "Сени тинглаяпман... 🎙️";
+    setMood("thinking");
+  };
+
+  recognition.onresult = event => {
+    const transcript =
+      event.results[0][0].transcript;
+
+    input.value = transcript;
+    sendMessage();
+  };
+
+  recognition.onerror = event => {
+    statusText.textContent =
+      "Микрофон хатоси: " + event.error;
+  };
+
+  recognition.onend = () => {
+    if (statusText.textContent === "Сени тинглаяпман... 🎙️") {
+      statusText.textContent = "Тинглаш тугади.";
+    }
+  };
+
+  recognition.start();
+}
+
+// Робот вақти-вақти билан кўзларини пирпиратади.
+function blink() {
+  robot.classList.add("blink");
+
+  setTimeout(() => {
+    robot.classList.remove("blink");
+  }, 180);
+}
+
+function randomBlink() {
+  blink();
+
+  setTimeout(
+    randomBlink,
+    2000 + Math.random() * 3500
+  );
+}
+
+randomBlink();
+
+// Фойдаланувчи экранга босганда робот қарайди.
+document.addEventListener("pointerdown", event => {
+  if (event.target.closest("button, input, select")) {
+    return;
+  }
+
+  const pupils = document.querySelectorAll(".pupil");
+
+  pupils.forEach(pupil => {
+    pupil.style.transform =
+      Math.random() > 0.5
+        ? "translateX(5px)"
+        : "translateX(-5px)";
+  });
+});
+
+// Бошланғич салом.
+setTimeout(() => {
+  speak("Салом! Менинг исмим Робо. Танишганимдан хурсандман!");
+}, 900);
+</script>
+
+</body>
+  </html>
